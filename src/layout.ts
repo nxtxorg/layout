@@ -2,7 +2,7 @@
     Author: Thomas Gwynfryn McCollin
     License: MIT */
 
-import {NodeType, Package, INxtx} from '../nxtx';
+import {NodeType, Package, INxtx} from '../nxtx-interface';
 declare const nxtx: INxtx;
 
 const style = document.createElement("style");

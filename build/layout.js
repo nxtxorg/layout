@@ -1,2 +1,67 @@
-var layout=function(){"use strict";var e;!function(e){e[e.Paragraph=1]="Paragraph",e[e.Command=2]="Command",e[e.Text=3]="Text",e[e.Block=4]="Block",e[e.Html=5]="Html",e[e.Node=6]="Node",e[e.Dictionary=11]="Dictionary",e[e.Array=12]="Array",e[e.Number=13]="Number",e[e.String=14]="String"}(e||(e={}));var t=document.createElement("style");t.id="layout-style-block",document.head.appendChild(t);var n=t.sheet,r=function(e,t){n.deleteRule?n.deleteRule(t):n.removeRule&&n.removeRule(t),n.insertRule(e,t)},o={all:function(e){r(".sheet { padding: "+e+" }",1)},left:function(e){r(".sheet { padding-left: "+e+" }",1)},top:function(e){r(".sheet { padding-top: "+e+" }",1)},right:function(e){r(".sheet { padding-right: "+e+" }",1)},bottom:function(e){r(".sheet { padding-bottom: "+e+" }",1)},vertical:function(e){r(".sheet { padding-top: "+e+"; padding-bottom: "+e+" }",1)},horizontal:function(e){r(".sheet { padding-left: "+e+"; padding-right: "+e+" }",1)},"head-separator":function(e){n.insertRule("header { margin-bottom: "+e,2)},"foot-skip":function(e){n.insertRule("footer { margin-top: "+e,3)}};n.insertRule("@page { size: A4 }",0),n.insertRule(".sheet { padding: 2cm }",1),n.insertRule("header { height: 3cm }",2),n.insertRule("footer { height: 3cm }",3);var i={name:"layout",commands:{"set-paper-size":function(e){return r("@page { size: "+e+" }",0)},"set-header":function(e){return r("header {height: "+e+"mm",2)},"set-footer":function(e){return r("footer {height: "+e+"mm",3)}},preprocessors:{"set-margin":function(t){return Object.keys(t.value).forEach(function(n){return o[n]((r=t.value[n]).type!==e.Number?r.value:r.value+"mm");var r})}}};return nxtx&&nxtx.registerPackage(i),i}();
+var layout = (function () {
+    'use strict';
+
+    var NodeType;
+    (function (NodeType) {
+        NodeType[NodeType["Paragraph"] = 1] = "Paragraph";
+        NodeType[NodeType["Command"] = 2] = "Command";
+        NodeType[NodeType["Text"] = 3] = "Text";
+        NodeType[NodeType["Block"] = 4] = "Block";
+        NodeType[NodeType["Html"] = 5] = "Html";
+        NodeType[NodeType["Node"] = 6] = "Node";
+        NodeType[NodeType["Boolean"] = 10] = "Boolean";
+        NodeType[NodeType["Dictionary"] = 11] = "Dictionary";
+        NodeType[NodeType["Array"] = 12] = "Array";
+        NodeType[NodeType["Number"] = 13] = "Number";
+        NodeType[NodeType["String"] = 14] = "String";
+    })(NodeType || (NodeType = {}));
+
+    var style = document.createElement("style");
+    style.id = 'layout-style-block';
+    document.head.appendChild(style);
+    var sheet = style.sheet;
+    var parse = function (argNode) {
+        if (argNode.type !== NodeType.Number)
+            return argNode.value;
+        return argNode.value + 'mm';
+    };
+    var replaceRule = function (newRule, ruleIndex) {
+        if (sheet.deleteRule)
+            sheet.deleteRule(ruleIndex);
+        else if (sheet.removeRule)
+            sheet.removeRule(ruleIndex);
+        sheet.insertRule(newRule, ruleIndex);
+    };
+    var marginFormatters = {
+        all: function (value) { replaceRule(".sheet { padding: " + value + " }", 1); },
+        left: function (value) { replaceRule(".sheet { padding-left: " + value + " }", 1); },
+        top: function (value) { replaceRule(".sheet { padding-top: " + value + " }", 1); },
+        right: function (value) { replaceRule(".sheet { padding-right: " + value + " }", 1); },
+        bottom: function (value) { replaceRule(".sheet { padding-bottom: " + value + " }", 1); },
+        vertical: function (value) { replaceRule(".sheet { padding-top: " + value + "; padding-bottom: " + value + " }", 1); },
+        horizontal: function (value) { replaceRule(".sheet { padding-left: " + value + "; padding-right: " + value + " }", 1); },
+        'head-separator': function (value) { sheet.insertRule("header { margin-bottom: " + value, 2); },
+        'foot-skip': function (value) { sheet.insertRule("footer { margin-top: " + value, 3); },
+    };
+    sheet.insertRule('@page { size: A4 }', 0);
+    sheet.insertRule(".sheet { padding: 2cm }", 1);
+    sheet.insertRule('header { height: 3cm }', 2);
+    sheet.insertRule('footer { height: 3cm }', 3);
+    var pkg = {
+        name: 'layout',
+        commands: {
+            'set-paper-size': function (paperSizeNode) { return replaceRule("@page { size: " + paperSizeNode + " }", 0); },
+            'set-header': function (heightNode) { return replaceRule("header {height: " + heightNode + "mm", 2); },
+            'set-footer': function (heightNode) { return replaceRule("footer {height: " + heightNode + "mm", 3); }
+        },
+        preprocessors: {
+            'set-margin': function (dictNode) { return Object.keys(dictNode.value).forEach(function (key) { return marginFormatters[key](parse(dictNode.value[key])); }); }
+        }
+    };
+    if (nxtx)
+        nxtx.registerPackage(pkg);
+
+    return pkg;
+
+}());
 //# sourceMappingURL=layout.js.map
